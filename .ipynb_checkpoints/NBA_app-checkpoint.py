@@ -11,32 +11,37 @@ df = pd.read_csv('data/all_seasons.csv')
 # Streamlit app
 st.title("NBA Player Prediction App")
 
-# Get input features from the user
+# Get unique values for team_abbreviation and college
 team_abbreviation_options = df['team_abbreviation'].unique()
-team_abbreviation = st.selectbox("Team Abbreviation:", team_abbreviation_options)
-
-age = st.number_input("Age:")
-player_height = st.number_input("Player Height:")
-player_weight = st.number_input("Player Weight:")
-
 college_options = df['college'].unique()
+
+# User selects team and college from dropdowns
+team_abbreviation = st.selectbox("Team Abbreviation:", team_abbreviation_options)
 college = st.selectbox("College:", college_options)
 
-draft_number = st.number_input("Draft Number:")
-years_in_nba = st.number_input("Years in NBA:")
+# Convert categorical features to one-hot encoding
+all_team_dummies = pd.get_dummies(df['team_abbreviation'], prefix='team_abbreviation')
+all_college_dummies = pd.get_dummies(df['college'], prefix='college')
 
-# Convert categorical features to one-hot encoding with consistent column names
-team_abbreviation_dummy = pd.get_dummies(dict.fromkeys([team_abbreviation], 'team_abbreviation'))
-college_dummy = pd.get_dummies(dict.fromkeys([college], 'college'))
-
-# Concatenate numerical and one-hot encoded features
+# Create input_data DataFrame with numerical features and one-hot encoding
 input_data = pd.DataFrame({
-    'age': [age],
-    'player_height': [player_height],
-    'player_weight': [player_weight],
-    'draft_number': [draft_number],
-    'years_in_nba': [years_in_nba],
-}).join(team_abbreviation_dummy).join(college_dummy)
+    'age': st.number_input("Age:"),
+    'player_height': st.number_input("Player Height:"),
+    'player_weight': st.number_input("Player Weight:"),
+    'draft_number': st.number_input("Draft Number:"),
+    'years_in_nba': st.number_input("Years in NBA:"),
+})
+
+# Add one-hot encoding columns using dict.fromkeys() for consistency
+input_data = pd.concat([input_data, pd.get_dummies(dict.fromkeys([team_abbreviation], 'team_abbreviation'), prefix='team_abbreviation')],
+                       axis=1)
+
+input_data = pd.concat([input_data, pd.get_dummies(dict.fromkeys([college], 'college'), prefix='college')],
+                       axis=1)
+
+# Set the value for the selected team and college to 1
+input_data['team_abbreviation_' + team_abbreviation] = 1
+input_data['college_' + college] = 1
 
 # Make predictions
 predictions = loaded_model.predict(input_data)
