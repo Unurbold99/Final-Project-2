@@ -25,9 +25,9 @@ college = st.selectbox("College:", college_options)
 draft_number = st.number_input("Draft Number:")
 years_in_nba = st.number_input("Years in NBA:")
 
-# Convert categorical features to one-hot encoding
-team_abbreviation_dummy = pd.get_dummies(pd.Series([team_abbreviation]), prefix='team_abbreviation')
-college_dummy = pd.get_dummies(pd.Series([college]), prefix='college')
+# Convert categorical features to one-hot encoding with consistent column names
+team_abbreviation_dummy = pd.get_dummies(dict.fromkeys([team_abbreviation], 'team_abbreviation'))
+college_dummy = pd.get_dummies(dict.fromkeys([college], 'college'))
 
 # Concatenate numerical and one-hot encoded features
 input_data = pd.DataFrame({
