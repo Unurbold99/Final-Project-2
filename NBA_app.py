@@ -6,7 +6,7 @@ import joblib
 loaded_model = joblib.load('nba_random_forest_model.joblib')
 
 # Load your NBA player dataset (replace 'your_dataset.csv' with your actual file)
-df = pd.read_csv('your_dataset.csv')
+df = pd.read_csv('data/all_seasons.csv')
 
 # Streamlit app
 st.title("NBA Player Prediction App")
