@@ -36,7 +36,7 @@ input_data[team_abbreviation_col] = 1
 input_data[college_col] = 1
 
 # Ensure that the input data has the same columns as the model was trained on
-model_columns = loaded_model.get_booster().feature_names
+model_columns = loaded_model.feature_names_in_
 missing_columns = set(model_columns) - set(input_data.columns)
 input_data = input_data.reindex(columns=model_columns, fill_value=0)
 
