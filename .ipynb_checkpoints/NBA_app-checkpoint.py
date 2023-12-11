@@ -19,11 +19,7 @@ college_options = df['college'].unique()
 team_abbreviation = st.selectbox("Team Abbreviation:", team_abbreviation_options)
 college = st.selectbox("College:", college_options)
 
-# Convert categorical features to one-hot encoding
-all_team_dummies = pd.get_dummies(df['team_abbreviation'], prefix='team_abbreviation')
-all_college_dummies = pd.get_dummies(df['college'], prefix='college')
-
-# Create input_data DataFrame with numerical features and one-hot encoding
+# Create input_data DataFrame with numerical features
 input_data = pd.DataFrame({
     'age': [st.number_input("Age:")],
     'player_height': [st.number_input("Player Height:")],
@@ -33,15 +29,16 @@ input_data = pd.DataFrame({
 })
 
 # Add one-hot encoding columns using dict.fromkeys() for consistency
-input_data = pd.concat([input_data, pd.get_dummies(dict.fromkeys([team_abbreviation], 'team_abbreviation'), prefix='team_abbreviation')],
-                       axis=1)
+team_abbreviation_col = 'team_abbreviation_' + team_abbreviation
+college_col = 'college_' + college
 
-input_data = pd.concat([input_data, pd.get_dummies(dict.fromkeys([college], 'college'), prefix='college')],
-                       axis=1)
+input_data[team_abbreviation_col] = 1
+input_data[college_col] = 1
 
-# Set the value for the selected team and college to 1
-input_data['team_abbreviation_' + team_abbreviation] = 1
-input_data['college_' + college] = 1
+# Ensure that the input data has the same columns as the model was trained on
+model_columns = loaded_model.get_booster().feature_names
+missing_columns = set(model_columns) - set(input_data.columns)
+input_data = input_data.reindex(columns=model_columns, fill_value=0)
 
 # Make predictions
 predictions = loaded_model.predict(input_data)
