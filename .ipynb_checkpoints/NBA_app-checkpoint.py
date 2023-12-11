@@ -10,7 +10,7 @@ df = pd.read_csv('data/all_seasons.csv')
 
 # Select the top 20 colleges and label the rest as 'Other'
 top_colleges = df['college'].value_counts().nlargest(20).index
-df['college'] = df['college'].apply(lambda x: x if x in top_colleges else 'other')
+df['college'] = df['college'].apply(lambda x: x if x in top_colleges else 'Other')
 
 # Streamlit app
 st.title("NBA Player Prediction App")
@@ -25,11 +25,11 @@ college = st.selectbox("College:", college_options)
 
 # Create input_data DataFrame with numerical features
 input_data = pd.DataFrame({
-    'age': [st.number_input("Age:")],
-    'player_height': [st.number_input("Player Height:")],
-    'player_weight': [st.number_input("Player Weight:")],
-    'draft_number': [st.number_input("Draft Number:")],
-    'years_in_nba': [st.number_input("Years in NBA:")],
+    'age': [int(st.number_input("Age:"))],
+    'player_height': [int(st.number_input("Player Height (cm):"))],
+    'player_weight': [int(st.number_input("Player Weight (kg):"))],
+    'draft_number': [int(st.number_input("Draft Number:"))],
+    'years_in_nba': [int(st.number_input("Years in NBA:"))],
 })
 
 # Add one-hot encoding columns using dict.fromkeys() for consistency
@@ -48,9 +48,9 @@ input_data = input_data.reindex(columns=model_columns, fill_value=0)
 predictions = loaded_model.predict(input_data)
 
 # Display predictions
-st.write("Predictions:")
-st.write("Games Played (gp):", predictions[0][0])
-st.write("Points (pts):", predictions[0][1])
-st.write("Rebounds (reb):", predictions[0][2])
-st.write("Assists (ast):", predictions[0][3])
-st.write("Net Rating (net_rating):", predictions[0][4])
+st.markdown("<h1 style='text-align: center; color: #ff6347;'>Predictions</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 24px;'>Games Played (gp): <strong>{:.1f}</strong></p>".format(predictions[0][0]), unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 24px;'>Points (pts): <strong>{:.1f}</strong></p>".format(predictions[0][1]), unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 24px;'>Rebounds (reb): <strong>{:.1f}</strong></p>".format(predictions[0][2]), unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 24px;'>Assists (ast): <strong>{:.1f}</strong></p>".format(predictions[0][3]), unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 24px;'>Net Rating (net_rating): <strong>{:.1f}</strong></p>".format(predictions[0][4]), unsafe_allow_html=True)
