@@ -25,12 +25,13 @@ college = st.selectbox("College:", college_options)
 
 # Create input_data DataFrame with numerical features
 input_data = pd.DataFrame({
-    'age': [int(st.number_input("Age:"))],
-    'player_height': [int(st.number_input("Player Height (cm):"))],
-    'player_weight': [int(st.number_input("Player Weight (kg):"))],
-    'draft_number': [int(st.number_input("Draft Number:"))],
-    'years_in_nba': [int(st.number_input("Years in NBA:"))],
+    'age': [int(st.number_input("Age:", step=1))],
+    'player_height': [int(st.number_input("Player Height (cm):", step=1))],
+    'player_weight': [int(st.number_input("Player Weight (kg):", step=1))],
+    'draft_number': [int(st.number_input("Draft Number:", step=1))],
+    'years_in_nba': [int(st.number_input("Years in NBA:", step=1))],
 })
+
 
 # Add one-hot encoding columns using dict.fromkeys() for consistency
 team_abbreviation_col = 'team_abbreviation_' + team_abbreviation
