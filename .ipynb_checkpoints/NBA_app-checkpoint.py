@@ -8,6 +8,10 @@ loaded_model = joblib.load('nba_random_forest_model.joblib')
 # Load your NBA player dataset (replace 'your_dataset.csv' with your actual file)
 df = pd.read_csv('data/all_seasons.csv')
 
+# Select the top 20 colleges and label the rest as 'Other'
+top_colleges = df['college'].value_counts().nlargest(20).index
+df['college'] = df['college'].apply(lambda x: x if x in top_colleges else 'other')
+
 # Streamlit app
 st.title("NBA Player Prediction App")
 
