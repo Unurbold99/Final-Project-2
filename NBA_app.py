@@ -25,11 +25,11 @@ all_college_dummies = pd.get_dummies(df['college'], prefix='college')
 
 # Create input_data DataFrame with numerical features and one-hot encoding
 input_data = pd.DataFrame({
-    'age': st.number_input("Age:"),
-    'player_height': st.number_input("Player Height:"),
-    'player_weight': st.number_input("Player Weight:"),
-    'draft_number': st.number_input("Draft Number:"),
-    'years_in_nba': st.number_input("Years in NBA:"),
+    'age': [st.number_input("Age:")],
+    'player_height': [st.number_input("Player Height:")],
+    'player_weight': [st.number_input("Player Weight:")],
+    'draft_number': [st.number_input("Draft Number:")],
+    'years_in_nba': [st.number_input("Years in NBA:")],
 })
 
 # Add one-hot encoding columns using dict.fromkeys() for consistency
