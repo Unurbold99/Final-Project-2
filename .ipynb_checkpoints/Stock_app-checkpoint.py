@@ -104,4 +104,4 @@ if st.button("Show Graph"):
         y_max = selected_data['Highest Price'].max()
 
         # Plot the data using Streamlit line_chart with wider chart
-        st.line_chart(selected_data.set_index('Date')['Highest Price'], use_container_width=True, key=selected_company, height=400, y_axis_format='%.2f', min_value=y_min, max_value=y_max)
+        st.line_chart(selected_data.set_index('Date')['Highest Price'], use_container_width=True, height=400, y_axis_format='%.2f', min_value=y_min, max_value=y_max)
