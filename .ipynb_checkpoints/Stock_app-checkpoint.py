@@ -126,6 +126,16 @@ if st.button("Show Graph"):
     # Combine data for all selected companies into a single DataFrame
     combined_data = pd.concat(data_list, ignore_index=True)
 
-    # Plot the data using st.line_chart
+    # Plot the data using matplotlib
     if not combined_data.empty:
-        st.line_chart(combined_data.set_index('Date')['Highest Price'], width=1080, height=720, use_container_width=True)
+        plt.figure(figsize=(12, 6))
+        
+        for selected_company in selected_companies:
+            company_data = combined_data[combined_data['Company'] == selected_company]
+            plt.plot(company_data['Date'], company_data['Highest Price'], label=selected_company)
+
+        plt.xlabel('Date')
+        plt.ylabel('Highest Price')
+        plt.title('Stock Price Comparison')
+        plt.legend()
+        st.pyplot(plt)
