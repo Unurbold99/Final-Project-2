@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # Function to scrape data and return the combined DataFrame
+@st.cache
 def scrape_top_20_data():
     starting_url = 'https://www.mse.mn/en/mse_top_20/266'
     response = requests.get(starting_url)
@@ -92,7 +93,7 @@ if st.button("Scrape Top 20 data"):
                                      max_value=pd.to_datetime(selected_data['Date']).max(),
                                      value=(pd.to_datetime(selected_data['Date']).min(),
                                             pd.to_datetime(selected_data['Date']).max()),
-                                     format="MM/DD/YYYY")
+                                     format="YYYY/MM/DD")
 
     # Display wider plot
     st.line_chart(selected_data.set_index('Date')[['Highest Price']], use_container_width=True, width=800)
