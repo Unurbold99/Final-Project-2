@@ -80,7 +80,7 @@ st.title("Stock Price Analysis")
 selected_company = st.selectbox("Select a company:", url_df['Names'])
 
 # Input box for the period (in months)
-period_months = st.number_input("Enter the period (in months):", min_value=1, max_value=12, value=6)
+period_months = st.number_input("Enter the period (in months):", min_value=1, value=6)
 
 # Button to trigger data scraping and graph display
 if st.button("Show Graph"):
@@ -99,5 +99,9 @@ if st.button("Show Graph"):
         selected_data['Date'] = pd.to_datetime(selected_data['Date'])
         selected_data = selected_data[(selected_data['Date'] >= start_date) & (selected_data['Date'] <= today)]
 
-        # Plot the data using Streamlit line_chart
-        st.line_chart(selected_data.set_index('Date')['Highest Price'])
+        # Set Y-axis min and max based on historical data
+        y_min = selected_data['Highest Price'].min()
+        y_max = selected_data['Highest Price'].max()
+
+        # Plot the data using Streamlit line_chart with wider chart
+        st.line_chart(selected_data.set_index('Date')['Highest Price'], use_container_width=True, key=selected_company, height=400, y_axis_format='%.2f', min_value=y_min, max_value=y_max)
