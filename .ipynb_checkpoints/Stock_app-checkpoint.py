@@ -100,4 +100,4 @@ if st.button("Show Graph"):
         selected_data = selected_data[(selected_data['Date'] >= start_date) & (selected_data['Date'] <= today)]
 
         # Plot the data using Streamlit line_chart
-        st.line_chart(selected_data.set_index('Date')['Highest Price'], use_container_width=True)
+        st.line_chart(selected_data.set_index('Date')['Highest Price'], width=720)
