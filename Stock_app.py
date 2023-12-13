@@ -123,8 +123,6 @@ if st.button("Show Graph"):
     # Sort the combined data by date
     combined_data['Date'] = pd.to_datetime(combined_data['Date'])  # Ensure 'Date' column is datetime type
     combined_data = combined_data.sort_values(by='Date')
-    
-    print(combined_data)
 
     # Convert 'Highest Price' column to numeric type
     combined_data['Highest Price'] = pd.to_numeric(combined_data['Highest Price'], errors='coerce')
@@ -147,7 +145,7 @@ if st.button("Show Graph"):
         y_max = combined_data['Highest Price'].max()
         plt.ylim(y_min - 5, y_max + 5)  # Adjust the padding as needed
 
-        # Use MaxNLocator for better y-axis ticks
-        plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
+        # Set y-axis ticks to cover the entire range
+        plt.yticks(range(int(y_min), int(y_max) + 1, 100))  # Adjust the interval as needed
 
         st.pyplot(plt)
