@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import datetime
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Function to scrape data for a specific company
 def scrape_data(url, company_name):
@@ -103,5 +105,14 @@ if st.button("Show Graph"):
         y_min = selected_data['Highest Price'].min()
         y_max = selected_data['Highest Price'].max()
 
-        # Plot the data using Streamlit line_chart with wider chart
-        st.line_chart(selected_data.set_index('Date')['Highest Price'], use_container_width=True, height=400, y_axis_format='%.2f', min_value=y_min, max_value=y_max)
+        # Plot the data using Matplotlib
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(selected_data['Date'], selected_data['Highest Price'], label='Highest Price')
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Stock Price')
+        ax.set_title('Stock Price Analysis')
+        ax.legend()
+        ax.set_ylim(y_min, y_max)
+
+        # Display the plot using st.pyplot
+        st.pyplot(fig)
