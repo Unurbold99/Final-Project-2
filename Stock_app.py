@@ -120,6 +120,9 @@ if st.button("Show Graph"):
     # Combine data for all selected companies into a single DataFrame
     combined_data = pd.concat(data_list, ignore_index=True)
 
+    # Sort the combined data by date
+    combined_data = combined_data.sort_values(by='Date')
+
     # Plot the data using matplotlib
     if not combined_data.empty:
         plt.figure(figsize=(12, 6))
