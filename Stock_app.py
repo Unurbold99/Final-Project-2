@@ -140,7 +140,7 @@ if st.button("Show Graph"):
         plt.title('Stock Price Comparison')
         plt.legend()
 
-        # Set y-axis limits
+        # Set y-axis limits based on global min and max
         y_min = combined_data['Highest Price'].min()
         y_max = combined_data['Highest Price'].max()
         plt.ylim(y_min - 5, y_max + 5)  # Adjust the padding as needed
