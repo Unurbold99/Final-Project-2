@@ -3,3 +3,7 @@ pandas
 streamlit
 numpy
 scikit-learn
+requests
+BeautifulSoup
+matplotlib
+curve_fit
