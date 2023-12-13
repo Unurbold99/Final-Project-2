@@ -5,7 +5,7 @@ import pandas as pd
 import datetime
 import altair as alt
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import FuncFormatter, MaxNLocator
 
 # Function to scrape data for a specific company
 def scrape_data(url, company_name):
@@ -123,7 +123,7 @@ if st.button("Show Graph"):
     # Plot the data using matplotlib
     if not combined_data.empty:
         plt.figure(figsize=(12, 6))
-    
+
         for selected_company in selected_companies:
             company_data = combined_data[combined_data['Company'] == selected_company]
             plt.plot(company_data['Date'], company_data['Highest Price'], label=selected_company)
@@ -133,11 +133,14 @@ if st.button("Show Graph"):
         plt.title('Stock Price Comparison')
         plt.legend()
 
-        # Set y-axis ticks to display only thousands
+        # Set y-axis ticks to display only thousands with an interval of 1000
         def format_thousands(x, pos):
             return f'{int(x / 1000)}K'
 
         formatter = FuncFormatter(format_thousands)
         plt.gca().yaxis.set_major_formatter(formatter)
+
+        # Set y-axis major locator to MaxNLocator with steps of 1000
+        plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True, steps=[1, 2, 5, 10]))
 
         st.pyplot(plt)
