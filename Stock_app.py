@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import datetime
 import altair as alt
+import matplotlib.pyplot as plt
 
 # Function to scrape data for a specific company
 def scrape_data(url, company_name):
@@ -82,14 +83,6 @@ selected_companies = st.multiselect("Select companies:", url_df['Names'])
 
 # Input box for the period (in months)
 period_months = st.number_input("Enter the period (in months):", min_value=1, value=6)
-
-# Dictionary to store user-defined colors for each selected company
-company_colors = {}
-
-# Allow users to specify color for each selected company
-for company in selected_companies:
-    color = st.color_picker(f"Select color for {company}:", key=company)
-    company_colors[company] = color
 
 
 # Button to trigger data scraping and graph display
