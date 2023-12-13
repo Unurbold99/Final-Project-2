@@ -122,13 +122,13 @@ if st.button("Show Graph"):
     # Combine data for all selected companies into a single DataFrame
     combined_data = pd.concat(data_list, ignore_index=True)
 
-    # Plot the data using altair_chart with specified colors and labels
+    # Plot the data using altair_chart with default colors and labels
     if not combined_data.empty:
         chart = alt.Chart(combined_data).mark_line().encode(
             x='Date:T',
             y='Highest Price:Q',
             color='Company:N',
             tooltip=['Date:T', 'Highest Price:Q', 'Company:N']
-        ).properties(width=1080, height=720)
+        ).properties(width=1080, height=1080
 
         st.altair_chart(chart, use_container_width=True)
