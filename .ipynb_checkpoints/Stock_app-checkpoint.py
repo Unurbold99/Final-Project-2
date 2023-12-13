@@ -108,14 +108,17 @@ if st.button("Show Graph"):
         selected_data = scrape_data(selected_url, selected_company)
 
         if selected_data is not None:
-            # Add 'Company' column to distinguish between companies
-            selected_data['Company'] = selected_company
-
             # Filter data for the specified period
             today = pd.to_datetime(datetime.date.today())
             start_date = today - pd.DateOffset(months=period_months)
             selected_data['Date'] = pd.to_datetime(selected_data['Date'])
             selected_data = selected_data[(selected_data['Date'] >= start_date) & (selected_data['Date'] <= today)]
+
+            # Add 'Company' column to distinguish between companies
+            selected_data['Company'] = selected_company
+
+            # Keep only the relevant columns
+            selected_data = selected_data[['Date', 'Highest Price', 'Company']]
 
             # Append data to the list
             data_list.append(selected_data)
@@ -125,4 +128,4 @@ if st.button("Show Graph"):
 
     # Plot the data using st.line_chart
     if not combined_data.empty:
-        st.line_chart(combined_data.set_index('Date'), width=1080, height=720, use_container_width=True)
+        st.line_chart(combined_data.set_index('Date')['Highest Price'], width=1080, height=720, use_container_width=True)
