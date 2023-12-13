@@ -76,28 +76,47 @@ else:
 # Streamlit app
 st.title("Stock Price Analysis")
 
-# Selectbox to choose a company
-selected_company = st.selectbox("Select a company:", url_df['Names'])
+# Selectbox to choose multiple companies
+selected_companies = st.multiselect("Select companies:", url_df['Names'])
 
 # Input box for the period (in months)
 period_months = st.number_input("Enter the period (in months):", min_value=1, value=6)
 
+# Dictionary to store user-defined colors for each selected company
+company_colors = {}
+
+# Allow users to specify color for each selected company
+for company in selected_companies:
+    color = st.color_picker(f"Select color for {company}:", key=company)
+    company_colors[company] = color
+
 # Button to trigger data scraping and graph display
 if st.button("Show Graph"):
-    st.subheader(f"Stock Price Analysis for {selected_company}")
-    
-    # Get the selected company's URL
-    selected_url = url_df.loc[url_df['Names'] == selected_company, 'URLs'].iloc[0]
+    st.subheader("Stock Price Analysis")
 
-    # Scrape data for the selected company
-    selected_data = scrape_data(selected_url, selected_company)
+    # Create a dictionary to store data for each selected company
+    data_dict = {}
 
-    if selected_data is not None:
-        # Filter data for the specified period
-        today = pd.to_datetime(datetime.date.today())
-        start_date = today - pd.DateOffset(months=period_months)
-        selected_data['Date'] = pd.to_datetime(selected_data['Date'])
-        selected_data = selected_data[(selected_data['Date'] >= start_date) & (selected_data['Date'] <= today)]
+    # Loop through selected companies and scrape data
+    for selected_company in selected_companies:
+        # Get the selected company's URL
+        selected_url = url_df.loc[url_df['Names'] == selected_company, 'URLs'].iloc[0]
 
-        # Plot the data using Streamlit line_chart
-        st.line_chart(selected_data.set_index('Date')['Highest Price'], width=1080, height=720)
+        # Scrape data for the selected company
+        selected_data = scrape_data(selected_url, selected_company)
+
+        if selected_data is not None:
+            # Filter data for the specified period
+            today = pd.to_datetime(datetime.date.today())
+            start_date = today - pd.DateOffset(months=period_months)
+            selected_data['Date'] = pd.to_datetime(selected_data['Date'])
+            selected_data = selected_data[(selected_data['Date'] >= start_date) & (selected_data['Date'] <= today)]
+
+            # Store data in the dictionary
+            data_dict[selected_company] = selected_data
+
+    # Plot the data using Streamlit line_chart with specified colors and labels
+    if data_dict:
+        chart = st.line_chart(data_dict, width=1080, height=720, use_container_width=True)
+        for company, color in company_colors.items():
+            chart.line_chart(data_dict[company], use_container_width=True, line_key=company, line_color=color, line_label=company)
