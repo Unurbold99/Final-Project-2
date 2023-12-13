@@ -73,6 +73,7 @@ def scrape_top_20_data():
     else:
         st.warning(f"Failed to retrieve the webpage. Status Code: {response.status_code}")
 
+
 # Streamlit App
 st.title("Stock Price Data App")
 
@@ -87,13 +88,16 @@ if st.button("Scrape Top 20 data"):
     # Filter data based on selected company
     selected_data = scraped_data[scraped_data['Company'] == selected_company]
 
-    # Single slider for selecting the entire date range
+    # Convert dates to string for slider
+    date_range = pd.to_datetime(selected_data['Date'])
     start_date, end_date = st.slider("Select Date Range",
-                                     min_value=pd.to_datetime(selected_data['Date']).min(),
-                                     max_value=pd.to_datetime(selected_data['Date']).max(),
-                                     value=(pd.to_datetime(selected_data['Date']).min(),
-                                            pd.to_datetime(selected_data['Date']).max()),
-                                     format="YYYY/MM/DD")
+                                     min_value=str(date_range.min().date()),
+                                     max_value=str(date_range.max().date()),
+                                     value=(str(date_range.min().date()), str(date_range.max().date())))
+
+    # Convert string dates back to Timestamp format
+    start_date = pd.Timestamp(start_date)
+    end_date = pd.Timestamp(end_date)
 
     # Display wider plot
     st.line_chart(selected_data.set_index('Date')[['Highest Price']], use_container_width=True, width=800)
