@@ -1,16 +1,18 @@
 import streamlit as st
-import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
+import matplotlib.pyplot as plt
+from io import BytesIO
 
-# Function to scrape data for a specific company and return the DataFrame
-@st.cache
-def scrape_company_data(url):
+# Function to scrape data for a specific company
+def scrape_data(url, company_name):
     response = requests.get(url)
 
     if response.status_code == 200:
         html = response.text
         soup = BeautifulSoup(html, 'html.parser')
+
         table = soup.find('table', class_='table table-bordered trade_history_result table-striped table-hover table-condensed')
 
         if table:
@@ -18,6 +20,7 @@ def scrape_company_data(url):
 
             if tbody:
                 data = []
+
                 for row in tbody.find_all('tr'):
                     columns = row.find_all('td')
 
@@ -25,53 +28,76 @@ def scrape_company_data(url):
                         second_column = columns[1].text.strip()
                         sixth_column = columns[5].text.strip()
                         eighth_column = columns[7].text.strip()
-                        data.append({'Highest Price': second_column, 'Volume': sixth_column, 'Date': eighth_column})
+
+                        data.append({'Highest Price': second_column, 'Volume': sixth_column, 'Date': eighth_column, 'Company': company_name})
 
                 df = pd.DataFrame(data)
                 return df
             else:
-                st.warning("No tbody found in the table.")
+                st.warning(f"No tbody found in the table for {company_name}")
         else:
-            st.warning("No table with the specified class found.")
+            st.warning(f"No table with the specified class found for {company_name}")
     else:
-        st.warning(f"Failed to retrieve the webpage. Status Code: {response.status_code}")
+        st.error(f"Failed to retrieve the webpage for {company_name}. Status Code: {response.status_code}")
+        return None
 
-# Streamlit App
-st.title("Stock Price Data App")
+# Load the data initially
+starting_url = 'https://www.mse.mn/en/mse_top_20/266'
+response = requests.get(starting_url)
+html_content = response.content
 
-# Button to trigger scraping for all companies
-if st.button("Scrape Top 20 data"):
-    starting_url = 'https://www.mse.mn/en/mse_top_20/266'
-    response = requests.get(starting_url)
+if response.status_code == 200:
+    soup = BeautifulSoup(html_content, 'html.parser')
+    table = soup.find('table', class_='table dividend trade_table table-bordered table-striped table-hover table-condensed')
 
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.content, 'html.parser')
-        table = soup.find('table', class_='table dividend trade_table table-bordered table-striped table-hover table-condensed')
+    if table:
+        tbody = table.find('tbody')
 
-        if table:
-            tbody = table.find('tbody')
+        if tbody:
+            urls = []
+            names = []
+            for row in tbody.find_all('tr'):
+                link = row.find('a')
+                if link:
+                    href = link.get('href')
+                    full_url = f"https://www.mse.mn{href}"
+                    urls.append(full_url)
 
-            if tbody:
-                company_data = {}
-                for row in tbody.find_all('tr'):
-                    link = row.find('a')
-                    if link:
-                        href = link.get('href')
-                        full_url = f"https://www.mse.mn{href}"
-                        company_name = link.get_text(strip=True)
+                    name_text = link.get_text(strip=True)
+                    names.append(name_text)
 
-                        # Scrape data for the current company
-                        df = scrape_company_data(full_url)
+            url_df = pd.DataFrame({'URLs': urls, 'Names': names})
+        else:
+            st.warning("No tbody found in the table.")
+    else:
+        st.warning("No table with the specified class found.")
+else:
+    st.error(f"Failed to retrieve the webpage. Status Code: {response.status_code}")
 
-                        # Store the DataFrame for the current company
-                        company_data[company_name] = df
+# Streamlit app
+st.title("Stock Price Analysis")
 
-    st.success("Data successfully scraped!")
+# Selectbox to choose a company
+selected_company = st.selectbox("Select a company:", url_df['Names'])
 
-# Check if company_data is defined (i.e., if the button has been pressed)
-if 'company_data' in locals():
-    # Select box for company names
-    selected_company = st.selectbox("Select a Company", list(company_data.keys()), key="company_select")
+# Button to trigger data scraping and graph display
+if st.button("Show Graph"):
+    st.subheader(f"Stock Price Analysis for {selected_company}")
+    
+    # Get the selected company's URL
+    selected_url = url_df.loc[url_df['Names'] == selected_company, 'URLs'].iloc[0]
 
-    # Display the selected company's data
-    st.write(f"Data for {selected_company}:\n{company_data[selected_company]}")
+    # Scrape data for the selected company
+    selected_data = scrape_data(selected_url, selected_company)
+
+    if selected_data is not None:
+        # Plot the data
+        fig, ax = plt.subplots()
+        ax.plot(selected_data['Date'], selected_data['Highest Price'], label='Highest Price')
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Stock Price')
+        ax.set_title('Stock Price Analysis')
+        ax.legend()
+
+        # Display the plot
+        st.pyplot(fig)

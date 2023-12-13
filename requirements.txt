@@ -6,4 +6,5 @@ scikit-learn
 requests
 BeautifulSoup4
 matplotlib
+BytesIO
 curve_fit
