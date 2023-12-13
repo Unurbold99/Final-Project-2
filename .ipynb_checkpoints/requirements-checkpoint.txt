@@ -4,6 +4,6 @@ streamlit
 numpy
 scikit-learn
 requests
-BeautifulSoup
+BeautifulSoup4
 matplotlib
 curve_fit
