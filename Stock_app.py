@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # Function to scrape data and return the combined DataFrame
-@st.cache
+@st.cache(allow_output_mutation=True)
 def scrape_top_20_data():
     starting_url = 'https://www.mse.mn/en/mse_top_20/266'
     response = requests.get(starting_url)
