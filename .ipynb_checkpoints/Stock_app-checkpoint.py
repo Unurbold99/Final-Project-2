@@ -133,13 +133,6 @@ if st.button("Show Graph"):
         plt.title('Stock Price Comparison')
         plt.legend()
 
-        # Set y-axis ticks to display only thousands with an interval of 1000
-        def format_thousands(x, pos):
-            return f'{int(x / 1000)}K'
-
-        formatter = FuncFormatter(format_thousands)
-        plt.gca().yaxis.set_major_formatter(formatter)
-
         # Set y-axis major locator to MaxNLocator with steps of 1000
         plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True, steps=[1, 2, 5, 10]))
 
