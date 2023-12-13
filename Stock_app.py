@@ -86,9 +86,13 @@ if st.button("Scrape Top 20 data"):
     # Filter data based on selected company
     selected_data = scraped_data[scraped_data['Company'] == selected_company]
 
-    # Slider for selecting the period of the year
-    start_date = st.slider("Select Start Date", min_value=0, max_value=len(selected_data)-1, value=0)
-    end_date = st.slider("Select End Date", min_value=0, max_value=len(selected_data)-1, value=len(selected_data)-1)
+    # Single slider for selecting the entire date range
+    start_date, end_date = st.slider("Select Date Range",
+                                     min_value=pd.to_datetime(selected_data['Date']).min(),
+                                     max_value=pd.to_datetime(selected_data['Date']).max(),
+                                     value=(pd.to_datetime(selected_data['Date']).min(),
+                                            pd.to_datetime(selected_data['Date']).max()),
+                                     format="MM/DD/YYYY")
 
-    # Display graph
-    st.line_chart(selected_data.iloc[start_date:end_date+1, :].set_index('Date')[['Highest Price']])
+    # Display wider plot
+    st.line_chart(selected_data.set_index('Date')[['Highest Price']], use_container_width=True, width=800)
