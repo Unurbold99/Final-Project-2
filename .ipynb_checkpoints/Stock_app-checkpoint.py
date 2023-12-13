@@ -2,8 +2,7 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import matplotlib.pyplot as plt
-from io import BytesIO
+import datetime
 
 # Function to scrape data for a specific company
 def scrape_data(url, company_name):
@@ -80,6 +79,9 @@ st.title("Stock Price Analysis")
 # Selectbox to choose a company
 selected_company = st.selectbox("Select a company:", url_df['Names'])
 
+# Input box for the period (in months)
+period_months = st.number_input("Enter the period (in months):", min_value=1, max_value=12, value=6)
+
 # Button to trigger data scraping and graph display
 if st.button("Show Graph"):
     st.subheader(f"Stock Price Analysis for {selected_company}")
@@ -91,13 +93,11 @@ if st.button("Show Graph"):
     selected_data = scrape_data(selected_url, selected_company)
 
     if selected_data is not None:
-        # Plot the data
-        fig, ax = plt.subplots()
-        ax.plot(selected_data['Date'], selected_data['Highest Price'], label='Highest Price')
-        ax.set_xlabel('Date')
-        ax.set_ylabel('Stock Price')
-        ax.set_title('Stock Price Analysis')
-        ax.legend()
+        # Filter data for the specified period
+        today = datetime.date.today()
+        start_date = today - datetime.timedelta(days=30 * period_months)
+        selected_data['Date'] = pd.to_datetime(selected_data['Date'])
+        selected_data = selected_data[selected_data['Date'] >= start_date]
 
-        # Display the plot
-        st.pyplot(fig)
+        # Plot the data using Streamlit line_chart
+        st.line_chart(selected_data.set_index('Date')['Highest Price'])
