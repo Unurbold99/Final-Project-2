@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import datetime
+import altair as alt
 
 # Function to scrape data for a specific company
 def scrape_data(url, company_name):
@@ -121,11 +122,13 @@ if st.button("Show Graph"):
     # Combine data for all selected companies into a single DataFrame
     combined_data = pd.concat(data_list, ignore_index=True)
 
-    # Plot the data using Streamlit line_chart with specified colors and labels
+    # Plot the data using altair_chart with specified colors and labels
     if not combined_data.empty:
-        chart = st.line_chart(combined_data.set_index('Date'), width=1080, height=720, use_container_width=True)
+        chart = alt.Chart(combined_data).mark_line().encode(
+            x='Date:T',
+            y='Highest Price:Q',
+            color='Company:N',
+            tooltip=['Date:T', 'Highest Price:Q', 'Company:N']
+        ).properties(width=1080, height=720)
 
-        # Specify colors and labels for each selected company
-        for company, color in company_colors.items():
-            selected_company_data = combined_data[combined_data['Company'] == company]
-            chart.line_chart(selected_company_data.set_index('Date'), use_container_width=True, line_color=color, line_label=company)
+        st.altair_chart(chart, use_container_width=True)
