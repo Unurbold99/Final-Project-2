@@ -140,7 +140,4 @@ if st.button("Show Graph"):
         plt.title('Stock Price Comparison')
         plt.legend()
 
-        # Set y-axis major locator to MaxNLocator with steps of 1000
-        plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
-
         st.pyplot(plt)
