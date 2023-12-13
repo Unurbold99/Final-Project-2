@@ -5,9 +5,5 @@ numpy
 scikit-learn
 requests
 BeautifulSoup4
-altair
-matplotlib
-BytesIO
-curve_fit
 datetime
 random

@@ -91,6 +91,7 @@ for company in selected_companies:
     color = st.color_picker(f"Select color for {company}:", key=company)
     company_colors[company] = color
 
+
 # Button to trigger data scraping and graph display
 if st.button("Show Graph"):
     st.subheader("Stock Price Analysis")
@@ -122,13 +123,6 @@ if st.button("Show Graph"):
     # Combine data for all selected companies into a single DataFrame
     combined_data = pd.concat(data_list, ignore_index=True)
 
-    # Plot the data using altair_chart with default colors and labels
+    # Plot the data using st.line_chart
     if not combined_data.empty:
-        chart = alt.Chart(combined_data).mark_line().encode(
-            x='Date:T',
-            y='Highest Price:Q',
-            color='Company:N',
-            tooltip=['Date:T', 'Highest Price:Q', 'Company:N']
-        ).properties(width=1080, height=1080
-
-        st.altair_chart(chart, use_container_width=True)
+        st.line_chart(combined_data.set_index('Date'), width=1080, height=720, use_container_width=True)
