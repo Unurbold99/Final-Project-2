@@ -94,10 +94,10 @@ if st.button("Show Graph"):
 
     if selected_data is not None:
         # Filter data for the specified period
-        today = datetime.date.today()
-        start_date = today - datetime.timedelta(days=30 * period_months)
+        today = pd.to_datetime(datetime.date.today())
+        start_date = today - pd.DateOffset(months=period_months)
         selected_data['Date'] = pd.to_datetime(selected_data['Date'])
-        selected_data = selected_data[selected_data['Date'] >= start_date]
+        selected_data = selected_data[(selected_data['Date'] >= start_date) & (selected_data['Date'] <= today)]
 
         # Plot the data using Streamlit line_chart
         st.line_chart(selected_data.set_index('Date')['Highest Price'])
