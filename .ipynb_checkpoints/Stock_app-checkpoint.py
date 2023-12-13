@@ -94,8 +94,8 @@ for company in selected_companies:
 if st.button("Show Graph"):
     st.subheader("Stock Price Analysis")
 
-    # Create a dictionary to store data for each selected company
-    data_dict = {}
+    # Create a list to store data for each selected company
+    data_list = []
 
     # Loop through selected companies and scrape data
     for selected_company in selected_companies:
@@ -106,17 +106,26 @@ if st.button("Show Graph"):
         selected_data = scrape_data(selected_url, selected_company)
 
         if selected_data is not None:
+            # Add 'Company' column to distinguish between companies
+            selected_data['Company'] = selected_company
+
             # Filter data for the specified period
             today = pd.to_datetime(datetime.date.today())
             start_date = today - pd.DateOffset(months=period_months)
             selected_data['Date'] = pd.to_datetime(selected_data['Date'])
             selected_data = selected_data[(selected_data['Date'] >= start_date) & (selected_data['Date'] <= today)]
 
-            # Store data in the dictionary
-            data_dict[selected_company] = selected_data
+            # Append data to the list
+            data_list.append(selected_data)
+
+    # Combine data for all selected companies into a single DataFrame
+    combined_data = pd.concat(data_list, ignore_index=True)
 
     # Plot the data using Streamlit line_chart with specified colors and labels
-    if data_dict:
-        chart = st.line_chart(data_dict, width=1080, height=720, use_container_width=True)
+    if not combined_data.empty:
+        chart = st.line_chart(combined_data.set_index('Date'), width=1080, height=720, use_container_width=True)
+
+        # Specify colors and labels for each selected company
         for company, color in company_colors.items():
-            chart.line_chart(data_dict[company], use_container_width=True, line_key=company, line_color=color, line_label=company)
+            selected_company_data = combined_data[combined_data['Company'] == company]
+            chart.line_chart(selected_company_data.set_index('Date'), use_container_width=True, line_color=color, line_label=company)
