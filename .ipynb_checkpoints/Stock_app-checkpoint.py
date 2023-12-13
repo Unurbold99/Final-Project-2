@@ -82,22 +82,22 @@ if st.button("Scrape Top 20 data"):
     scraped_data = scrape_top_20_data()
     st.success("Data successfully scraped!")
 
-    # Select box for company names
-    selected_company = st.selectbox("Select a Company", scraped_data['Company'].unique())
+# Select box for company names
+selected_company = st.selectbox("Select a Company", scraped_data['Company'].unique(), key="company_select")
 
-    # Filter data based on selected company
-    selected_data = scraped_data[scraped_data['Company'] == selected_company]
+# Filter data based on selected company
+selected_data = scraped_data[scraped_data['Company'] == selected_company]
 
-    # Convert dates to string for slider
-    date_range = pd.to_datetime(selected_data['Date'])
-    start_date, end_date = st.slider("Select Date Range",
-                                     min_value=str(date_range.min().date()),
-                                     max_value=str(date_range.max().date()),
-                                     value=(str(date_range.min().date()), str(date_range.max().date())))
+# Convert dates to string for slider
+date_range = pd.to_datetime(selected_data['Date'])
+start_date, end_date = st.slider("Select Date Range",
+                                 min_value=str(date_range.min().date()),
+                                 max_value=str(date_range.max().date()),
+                                 value=(str(date_range.min().date()), str(date_range.max().date())))
 
-    # Convert string dates back to Timestamp format
-    start_date = pd.Timestamp(start_date)
-    end_date = pd.Timestamp(end_date)
+# Convert string dates back to Timestamp format
+start_date = pd.Timestamp(start_date)
+end_date = pd.Timestamp(end_date)
 
-    # Display wider plot
-    st.line_chart(selected_data.set_index('Date')[['Highest Price']], use_container_width=True, width=800)
+# Display wider plot
+st.line_chart(selected_data.set_index('Date')[['Highest Price']], use_container_width=True, width=800)
