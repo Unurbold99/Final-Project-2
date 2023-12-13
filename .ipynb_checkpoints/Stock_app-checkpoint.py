@@ -86,20 +86,11 @@ if 'scraped_data' in locals():
     # Select box for company names
     selected_company = st.selectbox("Select a Company", scraped_data['Company'].unique(), key="company_select")
 
-    # Filter data based on selected company
-    selected_data = scraped_data[scraped_data['Company'] == selected_company]
+    # Input field for the number of months to display
+    period_months = st.number_input("Period (months)", min_value=1, max_value=120, value=12)
 
-    # Convert dates to string for slider
-    date_range = pd.to_datetime(selected_data['Date'])
-    start_date, end_date = st.slider("Select Date Range",
-                                     min_value=str(date_range.min().date()),
-                                     max_value=str(date_range.max().date()),
-                                     value=(str(date_range.min().date()), str(date_range.max().date())))
-
-    # Convert string dates back to Timestamp format
-    start_date = pd.Timestamp(start_date)
-    end_date = pd.Timestamp(end_date)
+    # Filter data based on selected company and period
+    selected_data = scraped_data[scraped_data['Company'] == selected_company].tail(period_months)
 
     # Display wider plot
     st.line_chart(selected_data.set_index('Date')[['Highest Price']], use_container_width=True, width=800)
-
