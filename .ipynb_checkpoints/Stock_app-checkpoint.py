@@ -145,7 +145,7 @@ if st.button("Show Graph"):
         y_max = combined_data['Highest Price'].max()
         plt.ylim(y_min - 5, y_max + 5)  # Adjust the padding as needed
 
-        # Set y-axis ticks to cover the entire range
-        plt.yticks(range(int(y_min), int(y_max) + 1, 100))  # Adjust the interval as needed
+        # Use MaxNLocator for better y-axis ticks
+        plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
 
         st.pyplot(plt)
